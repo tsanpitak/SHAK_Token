@@ -13,7 +13,7 @@ The SHAK Token is the Stable Hyper Algorithmic Kryptocurrency. It is intended to
     - [Country Indicator Balancing](#country-indicator-balancing)
     - [Continuous FX Balancing](#continuous-fx-balancing)
 - [Smart Contracts](#smart-contracts)
-- [Oracle](#oracle)
+- [Oraclize](#oraclized)
 - [User Guide](#user-guide)
 - [Contributors](#contributors)
 
@@ -63,20 +63,45 @@ For example, given a portfolio of 20 non-pegged currencies, after training and t
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-## Smart Contracts [@Tee?]
+## Smart Contracts
 ---
 ![Smart_Contracts](images/smartcontracts.png)
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+The smart contract is acting as the frontend for buying and redeeming our tokens. It will be the interface which clients will buy and redeem our tokens. Our token are built to ERC20 standard, as well as utilzed safemath for security.
+
+Operations
+
+The contract holds funds in ETH for day-to-day transactions. The contract will not allow token redemption which it could not cover with available fund, and will advice client to contact our office. 
+
+As a client initiated transaction with the contract, the contract will updates the rate with the latest rate posted on our server through Oraclize and use that rate to convert tokens to ETH, vice versa. Moreover, the contract will log each transaction (buying, redeeming, transferring, and oraclize pull) to the chain as our transaction ledger.
+
 
 ## Oracle [@Henry]
 ---
 ![Oracle](images/oracle.jpg)
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-## User Guide [@Tee?]
+## User Guide
 ---
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Clients will interact with our smart contract in 3 ways: Buy Tokens, Redeem Tokens, Transfer Tokens, and Check Token Balance.
+- Buy Tokens
+    - The contract will only use message sender as source of ETH for transaction and message value as amount of ETH in wei to buy tokens.
+    - Client will specify the wallet which SHAK token would be place. 
+    - If we have already reached the maximum number of tokens, the contract will not sell any token to message sender, and return the remaining value and gas. If we have not reached maximum number of token, the contract will sell the remaining amount up to maximum number of token or total worth of message value, whichever is less.
+    - Any remainder left from converting to SHAK token will be return to message sender.
+- Redeem Tokens
+    - The contract will assume that the message sender is the token owner who will specify the number of tokens to redeem.
+    - If token owner doesn’t have enough tokens to redeem, the transaction is terminated. Otherwise, the contract will update the conversion rate, then send ETH back to the owner. If the contract doesn’t have enough ETH to cover this redemption, then, it will notify the contract owner to contact our office. 
+- Transfer Tokens
+    - The contract will assume that the message sender is the token owner who will specify the number of tokens to redeem and to whom to transfer the tokens.
+    - If token owner doesn’t have enough tokens to transfer, the transaction is terminated.
+- Check Token Balance
+    - The contract will assume that the message sender is the token owner. It will return the number of tokens registered to the owner.
 
+Operator will be able to check conversion rate, check number of token sold, remaining token, maximum number of tokens, check contract’s ETH balance, set URL for oraclize and withdraw ETH from the contract.
+- Withdraw funds
+    - Only the "fund wallet" address specified at contract construction can withdraw ETH.
+    - Operator will specify how much ETH to withdraw in wei, then the contract will transfer funds to the fund wallet. If the contract doesn't have enough to send, then the operation is terminated.
 
 ## Contributors
 ---
