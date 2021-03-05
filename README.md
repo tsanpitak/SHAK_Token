@@ -37,10 +37,11 @@ Scripts covered: [countryweight.py](countryweight.py), placeholder
 ## Smart Contract Deployment
 
 ### Installation Required:
-
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 ## Balancing Methodology
 ---
+![Balance](images/balance.png)
 
 Stability is the cornerstone of our cryptocurrency. As such, we are evaluating the currency basket we hold daily. In addition to monitoring the interday fluctuations in exchange rates, we also take a long-term approach by looking at key indicators for the countries of our currencies to anticipate future currency movements. This country indicator balancing is done at a lesser frequency as these indicators are only released annually.
 
@@ -52,19 +53,27 @@ Matched against this set of historical indicators are the annualized volatility 
 
 This model takes in the annualized volatility and removes the most volatile 25% of projections and sets the weighting to 0. Then based on the remaining volatility associated with each country/currency pair, it assigns weights for the portfolio (with higher weight assigned to lower projected volatility). These weighting recommendations then form the baseline for the continuous FX balancing algorithm that will be explained in the next section.
 
-### Continuous FX Balancing
+For example, given a portfolio of 20 non-pegged currencies, after training and testing the model, the recommended breakdown of the currencies are as follows:
+
+![Country_Weighting](images/Country_Weighting.png)
+
+
+
+### Continuous FX Balancing [@Kiel]
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-## Smart Contracts
+## Smart Contracts [@Tee?]
 ---
+![Smart_Contracts](images/smartcontracts.png)
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-## Oracle
+## Oracle [@Henry]
 ---
+![Oracle](images/oracle.jpg)
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-## User Guide
+## User Guide [@Tee?]
 ---
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
@@ -73,4 +82,4 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 ---
 |Doc Fern|Albert Kong|Thee Sanpitakseree|Henry Schrader|Kiel Wheat|
 |:------:|:---------:|:----------------:|:------------:|:--------:|
-|![Doc](images/propic.png)| ![Albert](images/propic.png)| ![Thee](images/propic.png)| ![Henry](images/propic.png)| ![Kiel](images/propic.png)|
+|![Doc](images/propic.png)| ![Albert](images/AKpropic.png)| ![Tee](images/propic.png)| ![Henry](images/propic.png)| ![Kiel](images/propic.png)|
