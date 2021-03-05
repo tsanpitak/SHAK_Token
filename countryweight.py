@@ -35,7 +35,7 @@ ind_dict = {
 
 # Countries included for evaluation for currency basket
 full_country_basket = [
-    "USA", # USA
+    #"USA", # USA
     "AUS", # Australia
     "BRA", # Brazil
     "GBR", # Great Britain
@@ -49,7 +49,7 @@ full_country_basket = [
     "SGP", # Singapore
     "ZAF", # South Africa
     "KOR", # South Korea
-    "LKA", # Sri Lanka
+    #"LKA", # Sri Lanka
     "SWE", # Sweden
     "CHE", # Switzerland
     "THA", # Thailand

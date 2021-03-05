@@ -17,11 +17,26 @@ The SHAK Token is the Stable Hyper Algorithmic Kryptocurrency. It is intended to
 ## Installation
 ---
 
-In order to run the associated scripts in this repository, some installation packages are required. They are listed below by section, with the specific scripts specified as well.
+In order to run the associated scripts in this repository, some installation packages are required. They are listed below by section, with the specific scripts specified as well. Most of these can be installed with the [Anaconda](https://www.anaconda.com) package (as indicated with an asterisk).
 
-### Balancing Algorithm
+## Balancing Algorithm
 
-Scripts impacted: [countryweight.py](countryweight.py), placeholder
+Scripts covered: [countryweight.py](countryweight.py), placeholder
+
+### Key Python Libraries Required:
+|Library|Command Line Install|
+|-------|-----------------------------|
+|[Pandas*](https://pandas.pydata.org/getting_started.html) | ```conda install pandas``` |
+|[Numpy*](https://numpy.org/install/)  | ```conda install numpy```  |
+|[ScikitLearn*](https://scikit-learn.org/stable/install.html#)|```pip install -U scikit-learn```|
+
+
+## Placeholder
+
+### Python Libraries Required:
+
+```
+```
 
 
 ## Balancing Methodology
@@ -31,13 +46,16 @@ Stability is the cornerstone of our cryptocurrency. As such, we are evaluating t
 
 ### Country Indicator Balancing
 
+
 ### Continuous FX Balancing
 
 ## User Guide
 ---
 
+
+
 ## Contributors
 ---
-
-Albert Kong
-Kiel 
+|Doc Fern|Albert Kong|Thee Sanpitakseree|Henry Schrader|Kiel Wheat|
+|:------:|:---------:|:----------------:|:------------:|:--------:|
+|![Doc](images/propic.png)| ![Albert](images/propic.png)| ![Thee](images/propic.png)| ![Henry](images/propic.png)| ![Kiel](images/propic.png)|
