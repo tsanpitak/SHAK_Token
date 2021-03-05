@@ -14,8 +14,7 @@ from flask import Flask
 from flask import request
 from flask import jsonify
 
-# TODO HENRY
-#from basket_price_setter script import *
+from basket_price_setter import *
 
 # Grab the CoinMarketData api key and Infura project id
 # stored in .env and verify they're are valid strings
@@ -40,13 +39,11 @@ def index():
     return "true"
 
 @SHAK_price_oracle.route('/SHAK_wei_price', methods=['GET'])
-# TODO HENRY
-# add a before function that will retrieve latest token stats from
-# solidity contract, potentially also run basket price scripts?
+
 def get_wei_price():
-    # unit price for asset basket arbitarily set 10K USD for debug
-    # to fetch from another script later on
-    basket_USD_price = 10_000
+    # Fetch latest basket adjusted price from external scripts
+    basket_USD_price = get_basket_USD_price()
+    
     # Fetch latest ETH price from aggregate exchange average
     # calculated by CoinMarketCap API.
     parameters = {'symbol':'ETH'}
@@ -71,5 +68,3 @@ def get_wei_price():
 
 if __name__ == '__main__':
     SHAK_price_oracle.run(host='0.0.0.0', port=5001)
-    #SHAK_price_oracle.run(debug=True)
-    #
