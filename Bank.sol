@@ -7,7 +7,8 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v2.5
 contract Bank is usingOraclize {
     using SafeMath for uint;
     
-    string private orcl_url = "json(http://127.0.0.1:105/).wei?c=";
+    string private orcl_url = "json(http://127.0.0.1:105/SHAK_wei_price).wei";
+    //string private orcl_url = "json(http://58baa9c87c8b.ngrok.io/SHAK_wei_price).wei";
     SHAKtoken private token;
     
     // Address where we'll hold all ETH
@@ -60,8 +61,9 @@ contract Bank is usingOraclize {
     function updateContractBalance () public { contractBalance = address(this).balance; }
     
     function setURL (string memory _url) public onlyFund {
-        orcl_url = string(abi.encodePacked("json(", _url, "/SHAK_wei_price).wei?c="));
+        orcl_url = string(abi.encodePacked("json(", _url, "/SHAK_wei_price).wei"));
     }
+    function getURL () public view onlyFund returns (string memory) { return orcl_url; }
     
     /*
     Function for external client to buy tokens from us
@@ -171,19 +173,10 @@ contract Bank is usingOraclize {
     }
     
     function updateRate() public payable {
-        // When this function is called it calls our sklearn model is queried.
-        //if (oraclize_getPrice("URL") > address(this).balance) { //Makes sure that you have ETH to cover query
-        //    emit LogNewOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
-        //} else {
-            //Here we execute the query
-            string memory _totalToken;
-            string memory _url;
-            
-            _totalToken = uint2str(tokenTotal);
-            _url = string(abi.encodePacked(orcl_url,_totalToken));
-            emit LogNewOraclizeQuery("Oraclize query was sent: ", _url);
-            oraclize_query("URL", _url);
-        //}
+        string memory _url;
+        _url = orcl_url;
+        emit LogNewOraclizeQuery("Oraclize query was sent: ", _url);
+        oraclize_query("URL", _url);
     }
     
     function() external payable {}
