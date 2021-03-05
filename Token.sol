@@ -1,4 +1,4 @@
-pragma solidity >= 0.5.0 < 0.6.0;
+pragma solidity ^0.5.0;
 
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v2.5.0/contracts/token/ERC20/ERC20.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v2.5.0/contracts/token/ERC20/ERC20Detailed.sol";
@@ -13,10 +13,8 @@ contract SHAKtoken is ERC20, ERC20Detailed, ERC20Mintable {
         _;
     }
     
-    constructor(address payable _bank_address) 
+    constructor() 
         ERC20Detailed("Stable Hyper Algorithmic Kryptocurrency", "SHAK", 18) public
-    {    
-        bank_address = _bank_address;
-    }
+    { }
     
 }

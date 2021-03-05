@@ -4,100 +4,158 @@ import "./Token.sol";
 import "https://github.com/oraclize/ethereum-api/oraclizeAPI_0.5.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v2.5.0/contracts/math/SafeMath.sol";
 
-contract EIP823SenderI {
-    
-    mapping ( address => uint ) private exchangedWith;
-    mapping ( address => uint ) private exhangedBy;
-    
-    event Exchange(address _from, address _targetContract, uint _amount);
-    event ExchangeSpent(address _from, address _targetContract, address _to, uint _amount);
-    
-    function exchangeToken(address _targetContract, uint _amount) public returns(bool success, uint creditedAmount);
-    function exchangeAndSpend(address _targetContract, uint _amount,address _to) public returns(bool success);
-    function __exchangerCallback(address _targetContract,address _exchanger, uint _amount) public returns(bool success);
-}
-
-contract EIP823RecvI {
-    mapping ( address => uint ) private exchangesReceived;
-    
-    event Exchange(address _from, address _with, uint _amount);
-    event ExchangeSpent(address _from, address _targetContract, address _to, uint _amount);
-    
-    function __targetExchangeCallback (uint _to, uint _amount) public returns(bool success);
-    function __targetExchangeAndSpendCallback (address _from, address _to, uint _amount) public returns(bool success);
-}
-
-contract EIP823ServiceI {
-    address[] private registeredTokens;
-    
-    event Exchange( address _from, address _by, uint _value ,address _target );
-    event ExchangeAndSpent ( address _from, address _by, uint _value ,address _target ,address _to);
-    
-    function registerToken(address _token) public returns(bool success);
-    function exchangeToken(address _targetContract, uint _amount, address _from) public returns(bool success, uint creditedAmount);
-    function exchangeAndSpend(address _targetContract, uint _amount, address _from, address _to) public returns(bool success);
-}
-
 contract Bank is usingOraclize {
     using SafeMath for uint;
     
-    uint coinTotal;
-    string private constant orcl_url = "json(http://04517724.ngrok.io/prediction/api/v1.0/some_prediction?f1=1&f2=1&f3=1).result";
+    string private orcl_url = "json(http://127.0.0.1:105/).wei?c=";
+    SHAKtoken private token;
     
     // Address where we'll hold all ETH
     address payable private fundwallet = msg.sender;
-    uint private rate;
+    uint internal rate;
+    uint internal capToken;
+    uint internal remainToken;
+    uint internal tokenTotal;
+    
+    uint public contractBalance;
     
     mapping(address => uint) balances;
     
-    event LogNewOraclizeQuery(string description);
-    event sellTokenEvent(address _from, address _to, uint _amountToken, uint _amountETH);
-    event buyBackTokenEvent(address _to, uint _amountToken, uint _amountETH);
+    event LogNewOraclizeQuery(string description, string url);
+    event buyTokenEvent(address _from, address _to, uint _amountToken, uint _amountETH);
+    event redeemTokenEvent(address _from, address _to, uint _amountToken, uint _amountETH);
     event transferTokenEvent(address _from, address _to, uint _amountToken);
+    event fundWithdrawal(address _fund, uint amount);
+    event totalToken(uint _amount);
     
     modifier onlyFund {
         require(msg.sender == fundwallet, "You do not have permission!");
         _;
     }
     
-    constructor(uint _rate, address payable _fundwallet) public payable {
+    constructor(uint _rate, uint _cap, address payable _fundwallet, SHAKtoken _token) public payable {
         //Assign where to hold the funds
         fundwallet = _fundwallet;
         rate = _rate;
+        capToken = _cap;
+        token = _token;
+        remainToken = _cap;
+        contractBalance = address(this).balance;
     }
     
     function getRate() public view returns (uint) { return rate; }
     function setRate(uint _rate) public onlyFund { rate = _rate; }
-    function coinBalance () public view returns (uint) { return balances[msg.sender]; }
     
-    function sellToken(address payable _source, address payable _recv) public returns (bool) {
-        // updateRate
+    function getCap() public view returns (uint) { return capToken; }
+    function setCap(uint _cap) public onlyFund { 
+        require(_cap > capToken, "Cannot reduce total token amount.");
+        capToken = _cap; 
+        remainToken = _cap.sub(tokenTotal);
+    }
+    
+    function getTokenTotal() public view returns (uint) { return tokenTotal; }
+    function getTokenRemain() public view returns (uint) { return remainToken; }
+    
+    function getcoinBalance () public view returns (uint) { return balances[msg.sender]; }
+    function updateContractBalance () public { contractBalance = address(this).balance; }
+    
+    function setURL (string memory _url) public onlyFund {
+        orcl_url = string(abi.encodePacked("json(", _url, "/SHAK_wei_price).wei?c="));
+    }
+    
+    /*
+    Function for external client to buy tokens from us
+    */
+    function buyToken(address payable _recv) external payable returns (bool, uint) {
+        // check for cap
+        require(tokenTotal < capToken, "Maximum number of token reached!");
+        // updateRate - Oracalize
+        updateRate();
+        
         // calculate amount of tokens from msg.value
-        // transfer ETH from _source to fundwallet
+        uint token_amount;
+        uint eth_tx;
+        uint remainder;
+        token_amount = msg.value.div(rate);
+        eth_tx = msg.value.sub(remainder);
+        remainder = msg.value.mod(rate);
+        
+        if(token_amount > remainToken){
+            token_amount = remainToken;
+        }
+        
         // mint tokens to _recv
+        SHAKtoken(address(token)).mint(_recv, token_amount);
+        balances[_recv] = balances[_recv].add(token_amount);
+        
         // update coinTotal
-        // update Oracalize
+        tokenTotal = tokenTotal.add(token_amount);
+        remainToken = capToken.sub(tokenTotal);
+        contractBalance = address(this).balance;
+        
+        // return ETH from msg.sender
+        (bool success, ) = msg.sender.call.value(remainder)(""); //return remainder
+        require(success,"Unable to return remainder"); 
+        
         // emit event
+        emit buyTokenEvent(msg.sender, _recv, token_amount, eth_tx);
+        emit totalToken(tokenTotal);
         // return true if succeed
+        return(true, token_amount);
     }
     
-    function buyBackToken(address payable _source, address payable _recv, uint amount) public returns (bool) {
+    /*
+    Function for external client to sell tokens back to us
+    */
+    function redeemToken(address payable _recv, uint amount) external payable returns (bool) {
         // check whether _source can cover buyBack
-        // calculate amount of ETH
+        require(balances[msg.sender] >= amount, "msg.sender doesn't have enough token.");
+        // updateRate - Oracalize
+        updateRate();
+        // calculate amount of ETH 
+        uint eth_tx;
+        eth_tx = amount.mul(rate);
+        
+        require(eth_tx <= address(this).balance, "Unable to buy the specified amount, Please contact fund admin!");
+        
         // deduct tokens
+        balances[msg.sender] = balances[msg.sender].sub(amount);
         // deduct coinTotal
-        // transfer ETH from fundwallet
-        // update Oracalize
+        tokenTotal = tokenTotal.sub(amount);
+        remainToken = remainToken = capToken.sub(tokenTotal);
+        
+        // send ETH to _recv
+        _recv.transfer(eth_tx);
+
         // emit event
+        emit redeemTokenEvent(msg.sender, _recv, amount, eth_tx);
+        emit totalToken(tokenTotal);
         // returns true if succeed
+        return(true);
     }
     
-    function transferToken(address payable _source, address payable _recv, uint amount) public returns (bool) {
-        // check whether _source can cover transfer
+    /*
+    Function to transfer tokens between clients
+    */
+    function transferToken(address payable _recv, uint amount) public returns (bool) {
+        // check whether msg.sender can cover transfer
+        require(balances[msg.sender] >= amount, "msg.sender doesn't have enough token.");
         // deduct from _source
+        balances[msg.sender] = balances[msg.sender].sub(amount);
         // update _recv
+        balances[_recv] = balances[_recv].add(amount);
         // emit event
+        emit transferTokenEvent(msg.sender, _recv, amount);
         // returns true if succeed
+        return (true);
+    }
+    
+    function withdraws(uint _amount) external payable onlyFund returns (bool, uint) {
+        require(msg.value >= address(this).balance, "Unable to withdraws the specified amount.");
+        (bool success, ) = fundwallet.call.value(_amount)("");
+        require(success,"Unable to withdraws remainder"); 
+        emit fundWithdrawal(msg.sender, _amount);
+        return(true, msg.value);
     }
     
     function __callback(bytes32 myid, string memory result, bytes memory proof) public {
@@ -112,14 +170,37 @@ contract Bank is usingOraclize {
            rate = parseInt(result);
     }
     
-    function updateRate() private {
+    function updateRate() public payable {
         // When this function is called it calls our sklearn model is queried.
-        if (oraclize_getPrice("URL") > address(this).balance) { //Makes sure that you have ETH to cover query
-            emit LogNewOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
-        } else {
+        //if (oraclize_getPrice("URL") > address(this).balance) { //Makes sure that you have ETH to cover query
+        //    emit LogNewOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
+        //} else {
             //Here we execute the query
-            emit LogNewOraclizeQuery("Oraclize query was sent, standing by for the answer.."); 
-            oraclize_query("URL", orcl_url);
-        }
+            string memory _totalToken;
+            string memory _url;
+            
+            _totalToken = uint2str(tokenTotal);
+            _url = string(abi.encodePacked(orcl_url,_totalToken));
+            emit LogNewOraclizeQuery("Oraclize query was sent: ", _url);
+            oraclize_query("URL", _url);
+        //}
+    }
+    
+    function() external payable {}
+}
+
+contract BankDeployer {
+    address public bank_address;
+    address public token_address;
+    
+    constructor(address payable wallet ) public {
+        SHAKtoken token = new SHAKtoken();
+        token_address = address(token);
+        
+        Bank oBank = new Bank(1, 10000000000000000000, wallet, token);
+        bank_address = address(oBank);
+        
+        token.addMinter(bank_address);
+        token.renounceMinter();
     }
 }
