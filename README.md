@@ -109,6 +109,11 @@ The resulting graphs produced are as follows:
 
 ![Returns Comparison](images/portfolio_return_comparisons.png)
 
+### **Recent Returns Comparisons**
+<br/>
+
+![YTD Returns Comparison](images/YTD_returns.png)
+
 ## SHAK Oracle
 ---
 ![Oracle](images/oracle.jpg)
