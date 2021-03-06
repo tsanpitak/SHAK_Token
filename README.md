@@ -32,7 +32,7 @@ Scripts covered: [countryweight.py](countryweight.py), [Stable_coin.py](Stable_c
 |[Pandas*](https://pandas.pydata.org/getting_started.html) | ```conda install pandas``` |
 |[Numpy*](https://numpy.org/install/)  | ```conda install numpy```  |
 |[ScikitLearn*](https://scikit-learn.org/stable/install.html#)|```pip install -U scikit-learn```|
-|[Quandl](https://pypi.org/project/Quandl/)|```https://pypi.org/project/Quandl/```|
+|[Quandl](https://pypi.org/project/Quandl/)|```pip install quandl```|
 
 <br/>
 
