@@ -17,6 +17,7 @@ from sklearn.datasets import make_classification
 
 load_dotenv()
 
+#Retrieve currency basket weighting from countryweight.py and create currency basket
 def get_basket():
     # run fundamental weighting, run main and assign to dataframe, import rename_dict to use for Quandl calls
     import countryweight 
