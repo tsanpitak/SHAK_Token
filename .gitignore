@@ -1,4 +1,5 @@
+__pycache__
 .env
 .ipynb_checkpoints
 ngrok.exe
-__pycache__
+aws_zips
