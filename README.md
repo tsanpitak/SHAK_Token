@@ -148,4 +148,4 @@ Operator will be able to check conversion rate, check number of token sold, rema
 ---
 |Doc Fern|Albert Kong|Thee Sanpitakseree|Henry Schrader|Kiel Wheat|
 |:------:|:---------:|:----------------:|:------------:|:--------:|
-|![Doc](images/DFpropic.png)| ![Albert](images/AKpropic.png)| ![Tee](images/TSpropic.png)| ![Henry](images/propic.png)| ![Kiel](images/KWpropic.png)|
+|![Doc](images/DFpropic.png)| ![Albert](images/AKpropic.png)| ![Tee](images/TSpropic.png)| ![Henry](images/HSpropic.jpg)| ![Kiel](images/KWpropic.png)|
