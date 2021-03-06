@@ -83,9 +83,7 @@ rename_dict = {
 def getEconIndicator (indicator, num, countries, training = False):
     """
     Returns the indicators for the given list of countries as reported by the World Bank in the form of a pandas Dataframe
-
     Countries must be given as their 3-Digit ISO Code (https://countrycode.org/) and in the form of a list
-
     Indicator must be selected from the ind_dict defined above.
     """
     ind_data_dict = {}
@@ -141,7 +139,6 @@ def getAllIndicators (countries):
     """
     Returns the all of the defined indicators (in ind_dict) for the given list of countries as reported by the World Bank
     Countries must be given as their 3-Digit ISO Code (https://countrycode.org/) and in the form of a list
-
     Data returned in the form of a pandas DataFrame
     """
 
@@ -162,12 +159,9 @@ def getAllIndicators (countries):
 def getAllIndicatorsTraining (num, countries):
     """
     This function is for preparing data for training.
-
     Num is the number of values for each metric that should be pulled.
-
     Returns the all of the defined indicators (in ind_dict) for the given list of countries as reported by the World Bank
     Countries must be given as their 3-Digit ISO Code (https://countrycode.org/) and in the form of a list
-
     Data returned in the form of a pandas DataFrame
     """
 
