@@ -12,8 +12,8 @@ The SHAK Token is the Stable Hyper Algorithmic Kryptocurrency. It is intended to
 - [Balancing Methodology](#balancing-methodology)
     - [Country Indicator Balancing](#country-indicator-balancing)
     - [Continuous FX Balancing](#continuous-fx-balancing)
+- [SHAK Oracle](#SHAK-oracle)
 - [Smart Contracts](#smart-contracts)
-- [Oraclize](#oraclized)
 - [User Guide](#user-guide)
 - [Contributors](#contributors)
 
@@ -97,6 +97,28 @@ Combined Benchmark Beta           0.285431
 
 Also included in the repository is a [Basket Analysis notebook](basket_analysis.ipynb) for the CIO and marketing team to analyze the efficacy of the algorithm in regards to daily returns, volatility, and beta relative to a benchmark of currencies. Post Ethereum charts are also included given the current nature of the SHAK coin's native point of exchange. There are also a variety of callable methods within the [Stable_coin.py](Stable_coin.py) file that are meant to be used to remove/add filters, change benchmark baskets, and quickly review Random Forest results.
 
+The resulting graphs produced are as follows:
+
+### **Volatility Comparisons**
+<br/>
+
+![Volatility Comparison](images/Vol_comparisons.png)
+
+### **Returns Comparisons**
+<br/>
+
+![Returns Comparison](images/portfolio_return_comparisons.png)
+
+## SHAK Oracle
+---
+![Oracle](images/oracle.jpg)
+
+The Oracle's primary function ([SHAK_price_oracle.py](SHAK_price_oracle.py)) is to provide an API end point to serve requests for latest calculated basket price in wei from the basket balancing scripts. This API is hosted with Flask. The API endpoint is accessed by the SHAK token's Solidity contract to determine current exchange price (wei).
+
+The basket price and balancing scripts are calculating price in USD. The SHAK token smart contracts transact using wei. To convert latest basket USD price to current wei price, the Oracle fetches per request the latest ETH-USD exchange aggregated rate from Coin Market Data pro API, and the latest wei-ETH ratio from Web3 Infura.io mainnet API. 
+
+To allow websites and fund balancing operations to real-time monitor the total SHAK tokens active, the separate [SHAK_monitor.py](SHAK_monitor.py) invokes TotalCount functions within the SHAK contract to read number of active Tokens.
+
 
 ## Smart Contracts
 ---
@@ -109,18 +131,6 @@ Operations
 The contract holds funds in ETH for day-to-day transactions. The contract will not allow token redemption which it could not cover with available fund, and will advice client to contact our office. 
 
 As a client initiated transaction with the contract, the contract will updates the rate with the latest rate posted on our server through Oraclize and use that rate to convert tokens to ETH, vice versa. Moreover, the contract will log each transaction (buying, redeeming, transferring, and oraclize pull) to the chain as our transaction ledger.
-
-
-## Oracle
----
-![Oracle](images/oracle.jpg)
-
-The Oracle's primary function ([SHAK_price_oracle.py](SHAK_price_oracle.py)) is to provide an API end point to serve requests for latest calculated basket price in wei from the basket balancing scripts. This API is hosted with Flask. The API endpoint is accessed by the SHAK token's Solidity contract to determine current exchange price (wei).
-
-The basket price and balancing scripts are calculating price in USD. The SHAK token smart contracts transact using wei. To convert latest basket USD price to current wei price, the Oracle fetches per request the latest ETH-USD exchange aggregated rate from Coin Market Data pro API, and the latest wei-ETH ratio from Web3 Infura.io mainnet API. 
-
-To allow websites and fund balancing operations to real-time monitor the total SHAK tokens active, the separate [SHAK_monitor.py](SHAK_monitor.py) invokes TotalCount functions within the SHAK contract to read number of active Tokens.
-
 
 ## User Guide
 ---
