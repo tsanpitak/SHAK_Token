@@ -1,2 +1,4 @@
 .env
 .ipynb_checkpoints
+ngrok.exe
+__pycache__

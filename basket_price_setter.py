@@ -3,8 +3,12 @@
 #
 ##############################################################
 
-#import those other scripts in future
+from Stable_coin import *
+
 def get_basket_USD_price():
-    # unit price for asset basket arbitarily set 10K USD for debug
-    # to fetch from another script later on
-    return(10_000)
+    # call Stable_coin.py function to get modelled and calculated
+    # price per stable coin in USD.
+    return_close_price = 1.0001045433083318
+    basket_scalar = 1000
+    return(int(return_close_price*basket_scalar))
+#    return(int(return_close_price()*basket_scalar))
