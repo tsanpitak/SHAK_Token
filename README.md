@@ -24,7 +24,7 @@ Beyond cloning the repository, in order to run the included scripts, some instal
 
 ## Balancing Algorithm
 
-Scripts covered: [countryweight.py](countryweight.py), placeholder
+Scripts covered: [countryweight.py](countryweight.py), [Stable_coin.py](Stable_coin.py)
 
 ### Key Python Libraries Required:
 |Library|Command Line Install|
@@ -32,12 +32,30 @@ Scripts covered: [countryweight.py](countryweight.py), placeholder
 |[Pandas*](https://pandas.pydata.org/getting_started.html) | ```conda install pandas``` |
 |[Numpy*](https://numpy.org/install/)  | ```conda install numpy```  |
 |[ScikitLearn*](https://scikit-learn.org/stable/install.html#)|```pip install -U scikit-learn```|
+|[Quandl](https://pypi.org/project/Quandl/)|```https://pypi.org/project/Quandl/```|
 
+<br/>
 
-## Smart Contract Deployment
+## Smart Contract and Oracle Deployment
 
-### Installation Required:
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Scripts covered: [SHAK_price_oracle.py](SHAK_price_oracle.py), [SHAK_monitor.py](SHAK_monitor.py)
+
+### Key Python Libraries Required:
+|Library|Command Line Install|
+|-------|-----------------------------|
+|[Web3.py](https://web3py.readthedocs.io/en/stable/) | `pip install web3`|
+|[Flask](https://pypi.org/project/Flask/) | `pip install Flask` |
+
+<br/>
+
+### Env Variables Required:
+These env variables require definition prior to running these scripts:
+- `CMC_PRO_API_KEY =` requires creating a free account at [CoinMarketCap](https://pro.coinmarketcap.com/)
+- `WEB3_INFURA_PROJECT_ID =` for local testing, create a free account at [Infura](https://infura.io/)
+- `WEB3_PROVIDER_URI = https://kovan.infura.io/v3/aa3c1e7b65054c8595581a4241ff7b40`
+- `SHAK_TOKEN_ADDRESS = 0xTBD`
+
+<br/>
 
 ## Balancing Methodology
 ---
@@ -59,9 +77,26 @@ For example, given a portfolio of 20 non-pegged currencies, after training and t
 
 
 
-### Continuous FX Balancing [@Kiel]
+### Continuous FX Balancing
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+A master SHAK currency basket is created through Quandl API calls including currency alternatives, Gold and BTC. Using the Country Indicator Balancing weights, daily returns, and two features a low volatility, mean reverting algorithm is produced. An additional annualized volatility filter removes hyperinflationary and secular trending currencies (Venezuela, Gold and BTC this year). Bollinger band and daily return volatility averages create signals when outside of a standard deviation measure which are then utilized by a Random Forest Model to produce a synthetic portfolio currency value.
+
+In validating the efficacy of the algorithm, the following output was produced:
+```
+The percentage of days the portfolio has had low volatility:
+Portfolio to FRED/DEXUSEU beta    0.965986
+Portfolio to FRED/DEXCAUS beta    0.976474
+Portfolio to ECB/EURCHF beta      0.994048
+Combined Benchmark Beta           0.999433
+The percentage of days the portfolio has had extremely low correlation (beta .5 SD) 
+Portfolio to FRED/DEXUSEU beta    0.207200
+Portfolio to FRED/DEXCAUS beta    0.274943
+Portfolio to ECB/EURCHF beta      0.363662
+Combined Benchmark Beta           0.285431
+```
+
+Also included in the repository is a [Basket Analysis notebook](basket_analysis.ipynb) for the CIO and marketing team to analyze the efficacy of the algorithm in regards to daily returns, volatility, and beta relative to a benchmark of currencies. Post Ethereum charts are also included given the current nature of the SHAK coin's native point of exchange. There are also a variety of callable methods within the [Stable_coin.py](Stable_coin.py) file that are meant to be used to remove/add filters, change benchmark baskets, and quickly review Random Forest results.
+
 
 ## Smart Contracts
 ---
@@ -76,10 +111,16 @@ The contract holds funds in ETH for day-to-day transactions. The contract will n
 As a client initiated transaction with the contract, the contract will updates the rate with the latest rate posted on our server through Oraclize and use that rate to convert tokens to ETH, vice versa. Moreover, the contract will log each transaction (buying, redeeming, transferring, and oraclize pull) to the chain as our transaction ledger.
 
 
-## Oracle [@Henry]
+## Oracle
 ---
 ![Oracle](images/oracle.jpg)
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+The Oracle's primary function ([SHAK_price_oracle.py](SHAK_price_oracle.py)) is to provide an API end point to serve requests for latest calculated basket price in wei from the basket balancing scripts. This API is hosted with Flask. The API endpoint is accessed by the SHAK token's Solidity contract to determine current exchange price (wei).
+
+The basket price and balancing scripts are calculating price in USD. The SHAK token smart contracts transact using wei. To convert latest basket USD price to current wei price, the Oracle fetches per request the latest ETH-USD exchange aggregated rate from Coin Market Data pro API, and the latest wei-ETH ratio from Web3 Infura.io mainnet API. 
+
+To allow websites and fund balancing operations to real-time monitor the total SHAK tokens active, the separate [SHAK_monitor.py](SHAK_monitor.py) invokes TotalCount functions within the SHAK contract to read number of active Tokens.
+
 
 ## User Guide
 ---
@@ -107,4 +148,4 @@ Operator will be able to check conversion rate, check number of token sold, rema
 ---
 |Doc Fern|Albert Kong|Thee Sanpitakseree|Henry Schrader|Kiel Wheat|
 |:------:|:---------:|:----------------:|:------------:|:--------:|
-|![Doc](images/propic.png)| ![Albert](images/AKpropic.png)| ![Tee](images/propic.png)| ![Henry](images/propic.png)| ![Kiel](images/propic.png)|
+|![Doc](images/DFpropic.png)| ![Albert](images/AKpropic.png)| ![Tee](images/TSpropic.png)| ![Henry](images/propic.png)| ![Kiel](images/KWpropic.png)|
